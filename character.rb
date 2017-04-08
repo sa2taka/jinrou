@@ -2,5 +2,5 @@ require 'singleton'
 
 class Character
   include Singleton
-  attr_accessor :humans, :wolves
+  attr_accessor :humans, :wolves, :opposite
 end
