@@ -15,6 +15,10 @@ class Player
       Character.instance.wolf.include?(@name)
     end
   end
+
+  def vote(user)
+    Voting.instance.normal_voting_place[user] += 1
+  end
 end
 
 class Normal < Player
