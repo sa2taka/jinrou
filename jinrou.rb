@@ -10,11 +10,11 @@ class Jinrou
     Character.instance.humans.each do |human|
       instance_variable_set("@#{human}", 0)
     end
-    do_action_in_safe{ game_init }
+    do_action_in_safe{ character_init }
   end
 
-  #コマンドライン用の初期化関数
-  def game_init
+  #コマンドライン用の初期化関数, trueを返すまで続く
+  def character_init
     puts "プレイヤーの人数を指定してください"
     do_action_in_safe do
       @player_num = gets.to_i()
