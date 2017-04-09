@@ -71,14 +71,14 @@ class Jinrou
     puts "名前を順番に入力してください"
     @player_num.times do |i|
       do_action_in_safe do
-        print "#{i}番目の名前 : "
+        print "#{i + 1}番目の名前 : "
         name = gets.chomp
         is_include = @players.include?(name)
         @players[name] = "" unless is_include
         !is_include
       end
     end
-    @players.keys.each_index { |index| puts "#{index} : #{@players.keys[index]}" }
+    @players.keys.each_index { |index| puts "#{index + 1} : #{@players.keys[index]}" }
     puts "でよろしいでしょうか?(y/N)"
     gets.chomp == "y"
   end
@@ -94,7 +94,7 @@ class Jinrou
     end
     roles.shuffle!
     @players.keys.each_index{ |index| @players[@players.keys[index]] = roles[index]}
-    p @players
+    true # 特に意味もないけど他との整合性を取るために
   end
 
   private
