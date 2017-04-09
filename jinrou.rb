@@ -11,6 +11,10 @@ class Jinrou
       instance_variable_set("@#{human}", 0)
     end
     do_action_in_safe{ character_init }
+    do_action_in_safe do
+      @players = []
+      name_init
+    end
   end
 
   #コマンドライン用の初期化関数, trueを返すまで続く
@@ -57,6 +61,23 @@ class Jinrou
     self.instance_variables.each do |variable|
       puts "#{variable.to_s.gsub!(/@/, "")} : #{instance_variable_get(variable)}"
     end
+    puts "でよろしいでしょうか?(y/N)"
+    gets.chomp == "y"
+  end
+
+  # プレイヤーの名前の初期化関数、trueを返すまで続く
+  def name_init
+    puts "名前を順番に入力してください"
+    @players_num.times do |i|
+      do_action_in_safe do
+        print "#{i}番目の名前 : "
+        name = gets.chomp
+        is_include = @players.include?(name)
+        @players << name unless is_include
+        !is_include
+      end
+    end
+    @players.each_index {|index| puts "#{index} : #{@players[index]}"}
     puts "でよろしいでしょうか?(y/N)"
     gets.chomp == "y"
   end
