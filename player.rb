@@ -20,9 +20,9 @@ end
 class Normal < Player
   def action(user, value = 1)
     if(wolf?)
-      Voting.instance.wolf_voting_place += value
+      Voting.instance.wolf_voting_place[user] += value
     else
-      Voting.instance.hunam_voting_place += value
+      Voting.instance.hunam_voting_place[user] += value
     end
   end
 end

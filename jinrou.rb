@@ -12,12 +12,13 @@ class Jinrou
     end
     do_action_in_safe{ character_init }
     do_action_in_safe do
-      @players = []
+      @players = {}
       name_init
     end
+    role_init
   end
 
-  #コマンドライン用の初期化関数, trueを返すまで続く
+  #キャラクターの人数の初期化関数, trueを返すまで続く
   def character_init
     puts "プレイヤーの人数を指定してください"
     do_action_in_safe do
@@ -38,8 +39,8 @@ class Jinrou
       puts "#{wolf}の人数を指定してください"
       do_action_in_safe do
         eval("
-          @#{wolf} = gets.to_i()
-          @#{wolf} >= 0 and @#{wolf} <= 2 and remaining + @#{wolf} <= @player_num
+        @#{wolf} = gets.to_i()
+        @#{wolf} >= 0 and @#{wolf} <= 2 and remaining + @#{wolf} <= @player_num
         ")
       end
       eval("remaining -= @#{wolf}")
@@ -50,8 +51,8 @@ class Jinrou
       puts "#{human}の人数を指定してください"
       do_action_in_safe do
         eval("
-          @#{human} = gets.to_i()
-          @#{human} >= 0 and @#{human} <= 2 and remaining + @#{human} <= @player_num
+        @#{human} = gets.to_i()
+        @#{human} >= 0 and @#{human} <= 2 and remaining + @#{human} <= @player_num
         ")
       end
       eval("remaining -= @#{human}")
@@ -68,21 +69,37 @@ class Jinrou
   # プレイヤーの名前の初期化関数、trueを返すまで続く
   def name_init
     puts "名前を順番に入力してください"
-    @players_num.times do |i|
+    @player_num.times do |i|
       do_action_in_safe do
         print "#{i}番目の名前 : "
         name = gets.chomp
         is_include = @players.include?(name)
-        @players << name unless is_include
+        @players[name] = "" unless is_include
         !is_include
       end
     end
-    @players.each_index {|index| puts "#{index} : #{@players[index]}"}
+    @players.keys.each_index { |index| puts "#{index} : #{@players.keys[index]}" }
     puts "でよろしいでしょうか?(y/N)"
     gets.chomp == "y"
   end
 
+  # 配役の初期化
+  def role_init
+    roles = []
+    Character.instance.wolves.each do |wolf|
+      eval("@#{wolf}.times { roles << '#{wolf}' } ")
+    end
+    Character.instance.humans.each do |human|
+      eval("@#{human}.times { roles << '#{human}' } ")
+    end
+    roles.shuffle!
+    @players.keys.each_index{ |index| @players[@players.keys[index]] = roles[index]}
+    p @players
+  end
+
+  private
+
   def do_action_in_safe
     while(!yield)do end
+    end
   end
-end
