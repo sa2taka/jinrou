@@ -1,4 +1,5 @@
-require "voting.rb"
+require "./voting.rb"
+require "./character.rb"
 
 class Player
   attr_accessor :name, :player_name
@@ -10,7 +11,7 @@ class Player
   def wolf?
     if(Character.instance.opposite.include?(@name)) then
       !Character.instance.wolf.include?(@name)
-    else then
+    else
       Character.instance.wolf.include?(@name)
     end
   end

@@ -1,10 +1,11 @@
-require "./Character.rb"
-require "./player.rb"
-
-wolves = ["wolf"]
-humans = ["citizen"]
+require "./jinrou.rb"
+wolves = ["wolf", "multiple"]
+humans = ["citizen", "diviner"]
 
 Character.instance.wolves = wolves
 Character.instance.humans = humans
-puts Character.instance.wolves
-puts Character.instance.humans
+
+game = Jinrou.new
+game.players = []
+game.players << "a"
+p game.instance_variables
