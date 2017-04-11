@@ -29,10 +29,9 @@ class Jinrou
   def main_loop
     confirm_players do |player|
       puts "あなたは#{player.role}です。"
+      puts "これから夜のアクションを行ってください"
       player.action
     end
-    p Voting.instance.human_voting_place
-    p Voting.instance.wolf_voting_place
   end
 
   #キャラクターの人数の初期化関数, trueを返すまで続く

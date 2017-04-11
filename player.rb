@@ -42,7 +42,7 @@ end
 # 村人(と多重人格)のみ
 class Normal < Player
   def action()
-    puts "投票先を選択してください"
+    puts "人狼だと疑う人を選択してください"
     dest = gets.chomp
     while(dest.empty? or @name == dest or !Player.names.include?(dest)) do
       "もう一度入力してください"
@@ -73,7 +73,15 @@ class Friend < Player
   end
 
   def action()
-    puts "投票先を選択してください"
+    print "あなたの夜のアクションは"
+    if(wolf?)
+      puts "殺す人を投票で決めることです"
+      print "殺したい"
+    else
+      puts "人狼である人を予想することです"
+      print "人狼だと思う"
+    end
+    puts "人を選択してください"
     dest = gets.chomp
     while(dest.empty? or @name == dest or !Player.names.include?(dest) or @friends.include?(dest)) do
       "もう一度入力してください"
