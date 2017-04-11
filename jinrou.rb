@@ -103,12 +103,7 @@ class Jinrou
 
   #プレイヤーに確認させるための表示関数
   def first_contact
-    @players.each do |name, role|
-      clear_screen
-      do_action_in_safe do
-        puts "あなたは#{name}さんですか?(y/N)"
-        gets.chomp == "y"
-      end
+    confirm_players do |name, role|
       puts "あなたの役職は...#{role}です"
       puts "確認したらEnterキーを押してください"
       gets
@@ -117,9 +112,20 @@ class Jinrou
 
   def do_action_in_safe
     while(!yield)do end
-  end
+    end
 
-  def clear_screen
-    system "clear" or system "cls"
+    def clear_screen
+      system "clear" or system "cls"
+    end
+
+    def confirm_players
+      @players.each do |name, role|
+        clear_screen
+        do_action_in_safe do
+          puts "あなたは#{name}さんですか?(y/N)"
+          gets.chomp == "y"
+        end
+        yield(name, role)
+      end
+    end
   end
-end
