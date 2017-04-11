@@ -11,10 +11,10 @@ class Player
   end
 
   def wolf?
-    if(Character.instance.opposite.include?(@role)) then
-      !Character.instance.wolves.include?(@role)
+    if(Character.instance.opposite.include?(@role.to_sym)) then
+      !Character.instance.wolves.include?(@role.to_sym)
     else
-      Character.instance.wolves.include?(@role)
+      Character.instance.wolves.include?(@role.to_sym)
     end
   end
 
@@ -50,20 +50,20 @@ class Normal < Player
 end
 
 class Friend < Player
-  attr_accessor: friends
-  def initialize
-    super
-    friends = []
+  attr_accessor :friends
+  def initialize(role, name)
+    super(role, name)
+    @friends = []
   end
 
-  def add_friends(name)
+  def add_friend(name)
     friends << name
   end
 
   def action()
     puts "投票先を選択してください"
     dest = gets.chomp
-    while(dest.empty? or @name == dest or !Player.names.include?(dest)) do
+    while(dest.empty? or @name == dest or !Player.names.include?(dest) or @friends.include?(dest)) do
       "もう一度入力してください"
       dest = gets.chomp
     end

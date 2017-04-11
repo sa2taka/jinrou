@@ -109,12 +109,15 @@ class Jinrou
     Character.instance.humans.each_key do |human|
       eval("@#{human}.times { roles << '#{human}' } ")
     end
-    roles.shuffle!
     @players = []
+    roles.shuffle!
     @players_name.each_index do |index|
       if(Character.instance.wolves.has_key?(roles[index].to_sym))
         eval("@players << #{Character.instance.wolves[roles[index].to_sym]}.new(roles[index], @players_name[index])")
       else
+        puts "a"
+        puts "#{Character.instance.humans[roles[index].to_sym]}.new(roles[index], @players_name[index])"
+        puts "a"
         eval("@players << #{Character.instance.humans[roles[index].to_sym]}.new(roles[index], @players_name[index])")
       end
     end
@@ -124,6 +127,12 @@ class Jinrou
   #プレイヤーに確認させるための表示関数
   def first_contact
     confirm_players do |player|
+      @players.each do |player|
+        @players.each do |compare|
+          next if compare.name == player.name
+          player.add_friend(compare.name) if player.role == compare.role and player.kind_of?(Friend)
+        end
+      end
       puts "あなたの役職は...#{player.role}です"
       puts "確認したらEnterキーを押してください"
       gets
