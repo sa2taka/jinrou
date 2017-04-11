@@ -19,6 +19,8 @@ class Jinrou
     role_init
   end
 
+  private
+
   #キャラクターの人数の初期化関数, trueを返すまで続く
   def character_init
     puts "プレイヤーの人数を指定してください"
@@ -97,8 +99,6 @@ class Jinrou
     @players.keys.each_index{ |index| @players[@players.keys[index]] = roles[index]}
     true # 特に意味もないけど他との整合性を取るために
   end
-
-  private
 
   def do_action_in_safe
     while(!yield)do end
