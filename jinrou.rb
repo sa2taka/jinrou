@@ -18,6 +18,7 @@ class Jinrou
     end
     role_init
     first_contact
+    main_loop
   end
 
   private
