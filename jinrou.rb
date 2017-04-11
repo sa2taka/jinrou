@@ -51,7 +51,7 @@ class Jinrou
     remaining -= @wolf
     # 人狼チームの人数取得
     Character.instance.wolves.each_key do |wolf|
-      next if(wolf == :wolf)
+      next if wolf == :wolf then
       puts "#{wolf}の人数を指定してください"
       do_action_in_safe do
         eval("
@@ -63,7 +63,7 @@ class Jinrou
     end
     # 人間側チームの人数取得
     Character.instance.humans.each_key do |human|
-      next if(human == :citizen)
+      next if human == :citizen then
       puts "#{human}の人数を指定してください"
       do_action_in_safe do
         eval("
@@ -111,7 +111,7 @@ class Jinrou
     @players = []
     roles.shuffle!
     @players_name.each_index do |index|
-      if(Character.instance.wolves.has_key?(roles[index].to_sym))
+      if Character.instance.wolves.has_key?(roles[index].to_sym) then
         eval("@players << #{Character.instance.wolves[roles[index].to_sym]}.new(roles[index], @players_name[index])")
       else
         puts "a"

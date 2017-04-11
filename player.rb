@@ -11,7 +11,7 @@ class Player
   end
 
   def wolf?
-    if(Character.instance.opposite.include?(@role.to_sym)) then
+    if Character.instance.opposite.include?(@role.to_sym) then
       !Character.instance.wolves.include?(@role.to_sym)
     else
       Character.instance.wolves.include?(@role.to_sym)
@@ -22,7 +22,7 @@ class Player
   end
 
   def night_vote(user)
-    if(Voting.instance.normal_voting_place.has_key(user))
+    if Voting.instance.normal_voting_place.has_key(user) then
       Voting.instance.normal_voting_place[user] += 1
       true
     else
@@ -74,7 +74,7 @@ class Friend < Player
 
   def action()
     print "あなたの夜のアクションは"
-    if(wolf?)
+    if wolf? then
       puts "殺す人を投票で決めることです"
       print "殺したい"
     else
@@ -87,7 +87,7 @@ class Friend < Player
       "もう一度入力してください"
       dest = gets.chomp
     end
-    if(wolf?)
+    if wolf? then
       puts "1〜3の値を入力してください"
       value = -1
       while(value <= 0 or value > 3) do
