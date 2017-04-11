@@ -16,6 +16,9 @@ class Jinrou
       @players_name = []
       name_init
     end
+    @players_name.each do |name|
+      Voting.instance.add_user(name)
+    end
     role_init
     first_contact
     main_loop
@@ -24,7 +27,12 @@ class Jinrou
   private
 
   def main_loop
-
+    confirm_players do |player|
+      puts "あなたは#{player.role}です。"
+      player.action
+    end
+    p Voting.instance.human_voting_place
+    p Voting.instance.wolf_voting_place
   end
 
   #キャラクターの人数の初期化関数, trueを返すまで続く
@@ -132,8 +140,13 @@ class Jinrou
 
     def confirm_players
       @players.each do |player|
-        clear_screen
         do_action_in_safe do
+          clear_screen
+          puts "プレイヤー一覧"
+          @players.each do |player|
+            print "#{player.name} "
+          end
+          print "\n"
           puts "あなたは#{player.name}さんですか?(y/N)"
           gets.chomp == "y"
         end
