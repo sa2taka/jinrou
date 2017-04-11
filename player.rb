@@ -18,6 +18,9 @@ class Player
     end
   end
 
+  def confirmed
+  end
+
   def night_vote(user)
     if(Voting.instance.normal_voting_place.has_key(user))
       Voting.instance.normal_voting_place[user] += 1
@@ -58,6 +61,9 @@ class Friend < Player
 
   def add_friend(name)
     friends << name
+  end
+
+  def confirmed
   end
 
   def action()
