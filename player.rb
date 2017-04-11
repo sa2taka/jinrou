@@ -2,17 +2,17 @@ require "./voting.rb"
 require "./character.rb"
 
 class Player
-  attr_accessor :name, :player_name
-  def initialize(name, player_name)
+  attr_accessor :name, :role
+  def initialize(role, name)
     @name = name
-    @player_name = player_name
+    @role = role
   end
 
   def wolf?
-    if(Character.instance.opposite.include?(@name)) then
-      !Character.instance.wolf.include?(@name)
+    if(Character.instance.opposite.include?(@role)) then
+      !Character.instance.wolf.include?(@role)
     else
-      Character.instance.wolf.include?(@name)
+      Character.instance.wolf.include?(@role)
     end
   end
 

@@ -115,8 +115,8 @@ class Jinrou
 
   #プレイヤーに確認させるための表示関数
   def first_contact
-    confirm_players do |name, role|
-      puts "あなたの役職は...#{role}です"
+    confirm_players do |player|
+      puts "あなたの役職は...#{player.role}です"
       puts "確認したらEnterキーを押してください"
       gets
     end
@@ -134,10 +134,10 @@ class Jinrou
       @players.each do |player|
         clear_screen
         do_action_in_safe do
-          puts "あなたは#{player.player_name}さんですか?(y/N)"
+          puts "あなたは#{player.name}さんですか?(y/N)"
           gets.chomp == "y"
         end
-        yield(player.player_name, player.name)
+        yield(player)
       end
     end
   end
