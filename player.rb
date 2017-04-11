@@ -36,11 +36,35 @@ class Player
   end
 end
 
+# 村人(と多重人格)のみ
 class Normal < Player
   def action()
     puts "投票先を選択してください"
-    dest = ""
-    while(dest.empty? or @names == dest or !Player.names.include?(dest)) do
+    dest = gets.chomp
+    while(dest.empty? or @name == dest or !Player.names.include?(dest)) do
+      "もう一度入力してください"
+      dest = gets.chomp
+    end
+    Voting.instance.human_voting_place[dest] += 1
+  end
+end
+
+class Friend < Player
+  attr_accessor: friends
+  def initialize
+    super
+    friends = []
+  end
+
+  def add_friends(name)
+    friends << name
+  end
+
+  def action()
+    puts "投票先を選択してください"
+    dest = gets.chomp
+    while(dest.empty? or @name == dest or !Player.names.include?(dest)) do
+      "もう一度入力してください"
       dest = gets.chomp
     end
     if(wolf?)
