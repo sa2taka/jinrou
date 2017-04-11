@@ -4,18 +4,35 @@ class Jinrou
   attr_accessor :players, :player_num
 
   def initialize
-    Character.instance.wolves.each do |wolf|
+    Character.instance.wolves.each_key do |wolf|
       instance_variable_set("@#{wolf}", 0)
     end
-    Character.instance.humans.each do |human|
+    Character.instance.humans.each_key do |human|
       instance_variable_set("@#{human}", 0)
     end
+    clear_screen
     do_action_in_safe{ character_init }
     do_action_in_safe do
-      @players = {}
+      @players_name = []
       name_init
     end
+    @players_name.each do |name|
+      Voting.instance.add_user(name)
+    end
     role_init
+    first_contact
+    main_loop
+  end
+
+  private
+
+  def main_loop
+    confirm_players do |player|
+      puts "あなたは#{player.role}です。"
+      player.action
+    end
+    p Voting.instance.human_voting_place
+    p Voting.instance.wolf_voting_place
   end
 
   #キャラクターの人数の初期化関数, trueを返すまで続く
@@ -34,8 +51,8 @@ class Jinrou
     end
     remaining -= @wolf
     # 人狼チームの人数取得
-    Character.instance.wolves.each do |wolf|
-      next if(wolf == "wolf")
+    Character.instance.wolves.each_key do |wolf|
+      next if(wolf == :wolf)
       puts "#{wolf}の人数を指定してください"
       do_action_in_safe do
         eval("
@@ -46,8 +63,8 @@ class Jinrou
       eval("remaining -= @#{wolf}")
     end
     # 人間側チームの人数取得
-    Character.instance.humans.each do |human|
-      next if(human == "citizen")
+    Character.instance.humans.each_key do |human|
+      next if(human == :citizen)
       puts "#{human}の人数を指定してください"
       do_action_in_safe do
         eval("
@@ -73,12 +90,12 @@ class Jinrou
       do_action_in_safe do
         print "#{i + 1}番目の名前 : "
         name = gets.chomp
-        is_include = @players.include?(name)
-        @players[name] = "" unless is_include
+        is_include = @players_name.include?(name)
+        @players_name << name unless is_include
         !is_include
       end
     end
-    @players.keys.each_index { |index| puts "#{index + 1} : #{@players.keys[index]}" }
+    @players_name.each_index { |index| puts "#{index + 1} : #{@players_name[index]}" }
     puts "でよろしいでしょうか?(y/N)"
     gets.chomp == "y"
   end
@@ -86,20 +103,54 @@ class Jinrou
   # 配役の初期化
   def role_init
     roles = []
-    Character.instance.wolves.each do |wolf|
+    Character.instance.wolves.each_key do |wolf|
       eval("@#{wolf}.times { roles << '#{wolf}' } ")
     end
-    Character.instance.humans.each do |human|
+    Character.instance.humans.each_key do |human|
       eval("@#{human}.times { roles << '#{human}' } ")
     end
     roles.shuffle!
-    @players.keys.each_index{ |index| @players[@players.keys[index]] = roles[index]}
+    @players = []
+    @players_name.each_index do |index|
+      if(Character.instance.wolves.has_key?(roles[index].to_sym))
+        eval("@players << #{Character.instance.wolves[roles[index].to_sym]}.new(roles[index], @players_name[index])")
+      else
+        eval("@players << #{Character.instance.humans[roles[index].to_sym]}.new(roles[index], @players_name[index])")
+      end
+    end
     true # 特に意味もないけど他との整合性を取るために
   end
 
-  private
+  #プレイヤーに確認させるための表示関数
+  def first_contact
+    confirm_players do |player|
+      puts "あなたの役職は...#{player.role}です"
+      puts "確認したらEnterキーを押してください"
+      gets
+    end
+  end
 
   def do_action_in_safe
     while(!yield)do end
+    end
+
+    def clear_screen
+      system "clear" or system "cls"
+    end
+
+    def confirm_players
+      @players.each do |player|
+        do_action_in_safe do
+          clear_screen
+          puts "プレイヤー一覧"
+          @players.each do |player|
+            print "#{player.name} "
+          end
+          print "\n"
+          puts "あなたは#{player.name}さんですか?(y/N)"
+          gets.chomp == "y"
+        end
+        yield(player)
+      end
     end
   end

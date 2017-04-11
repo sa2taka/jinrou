@@ -4,7 +4,7 @@ class Character
   include Singleton
   attr_accessor :humans, :wolves, :opposite
   def initialize()
-    @humans = []
-    @wolves = []
+    @humans = {}
+    @wolves = {}
   end
 end
