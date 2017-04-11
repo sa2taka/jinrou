@@ -10,6 +10,7 @@ class Jinrou
     Character.instance.humans.each do |human|
       instance_variable_set("@#{human}", 0)
     end
+    clear_screen
     do_action_in_safe{ character_init }
     do_action_in_safe do
       @players = {}
@@ -103,3 +104,8 @@ class Jinrou
     while(!yield)do end
     end
   end
+
+  def clear_screen
+    system "clear" or system "cls"
+  end
+end
