@@ -64,6 +64,12 @@ class Friend < Player
   end
 
   def confirmed
+    puts "あなたの仲間一覧"
+    friends.each do |friend|
+      print "#{friend} "
+    end
+    print "仲間はいません" if friends.length == 0
+    print "\n"
   end
 
   def action()
