@@ -23,6 +23,10 @@ class Jinrou
 
   private
 
+  def main_loop
+
+  end
+
   #キャラクターの人数の初期化関数, trueを返すまで続く
   def character_init
     puts "プレイヤーの人数を指定してください"

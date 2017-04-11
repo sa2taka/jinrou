@@ -15,14 +15,28 @@ class Player
       Character.instance.wolf.include?(@name)
     end
   end
+
+  def night_vote(user)
+    if(Voting.instance.normal_voting_place.has_key(user))
+      Voting.instance.normal_voting_place[user] += 1
+      true
+    else
+      false
+    end
+  end
 end
 
 class Normal < Player
   def action(user, value = 1)
-    if(wolf?)
-      Voting.instance.wolf_voting_place[user] += value
+    if(Voting.instance.normal_voting_place.has_key(user))
+      if(wolf?)
+        Voting.instance.wolf_voting_place[user] += value
+      else
+        Voting.instance.hunam_voting_place[user] += value
+      end
+      true
     else
-      Voting.instance.hunam_voting_place[user] += value
+      false
     end
   end
 end
