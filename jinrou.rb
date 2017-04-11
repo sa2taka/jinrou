@@ -17,6 +17,7 @@ class Jinrou
       name_init
     end
     role_init
+    first_contact
   end
 
   private
@@ -100,9 +101,22 @@ class Jinrou
     true # 特に意味もないけど他との整合性を取るために
   end
 
+  #プレイヤーに確認させるための表示関数
+  def first_contact
+    @players.each do |name, role|
+      clear_screen
+      do_action_in_safe do
+        puts "あなたは#{name}さんですか?(y/N)"
+        gets.chomp == "y"
+      end
+      puts "あなたの役職は...#{role}です"
+      puts "確認したらEnterキーを押してください"
+      gets
+    end
+  end
+
   def do_action_in_safe
     while(!yield)do end
-    end
   end
 
   def clear_screen
