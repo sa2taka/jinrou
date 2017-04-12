@@ -32,12 +32,7 @@ class Jinrou
       puts "これから夜のアクションを行ってください"
       player.action
     end
-    # 死亡処理
-    died = key_has_max_value(Voting.instance.wolf_voting_place)
-    players.delete_if{|player| player.name == died}
-    players.each{|player| puts player.name}
-    puts "昨晩なくなった人は...#{died}さんです"
-    puts "疑われているのは#{key_has_max_value(Voting.instance.human_voting_place)}さんです"
+    action_after_night
   end
 
   #キャラクターの人数の初期化関数, trueを返すまで続く
@@ -179,5 +174,14 @@ class Jinrou
         end
       end
       res
+    end
+
+    def action_after_night
+      died = key_has_max_value(Voting.instance.wolf_voting_place)
+      players.delete_if{|player| player.name == died}
+      Voting.instance.rem_user(died)
+      players.each{|player| puts player.name}
+      puts "昨晩なくなった人は...#{died}さんです"
+      puts "疑われているのは#{key_has_max_value(Voting.instance.human_voting_place)}さんです"
     end
   end
