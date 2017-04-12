@@ -51,7 +51,7 @@ class Jinrou
     remaining -= @wolf
     # 人狼チームの人数取得
     Character.instance.wolves.each_key do |wolf|
-      next if wolf == :wolf then
+      next if wolf == :wolf
       puts "#{wolf}の人数を指定してください"
       do_action_in_safe do
         eval("
@@ -63,7 +63,7 @@ class Jinrou
     end
     # 人間側チームの人数取得
     Character.instance.humans.each_key do |human|
-      next if human == :citizen then
+      next if human == :citizen
       puts "#{human}の人数を指定してください"
       do_action_in_safe do
         eval("
