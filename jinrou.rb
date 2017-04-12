@@ -166,11 +166,14 @@ class Jinrou
 
     def key_has_max_value(hash)
       max_value = 0
-      res = ""
+      res = []
       hash.each do |key, value|
         if max_value < value then
-          res = key
+          res = []
+          res << key
           max_value = value
+        elsif max_value == value then
+          res << key
         end
       end
       res
@@ -178,15 +181,19 @@ class Jinrou
 
     def action_after_night
       died = key_has_max_value(Voting.instance.wolf_voting_place)
-      players.delete_if{|player| player.name == died}
+      died.shuffle!
+      players.delete_if{|player| player.name == died[0]}
       Voting.instance.rem_user(died)
       players.each{|player| puts player.name}
-      puts "昨晩なくなった人は...#{died}さんです"
+      puts "昨晩なくなった人は... #{died[0]}さん です"
+
       doubt = key_has_max_value(Voting.instance.human_voting_place)
       if doubt.empty?
         puts "疑われている人はいません"
       else
-        puts "疑われているのは#{doubt}さんです"
+        print "疑われているのは "
+        doubt.each{|item| print item, "さん "}
+        puts "です"
       end
     end
   end
