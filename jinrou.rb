@@ -32,6 +32,12 @@ class Jinrou
       puts "これから夜のアクションを行ってください"
       player.action
     end
+    # 死亡処理
+    died = key_has_max_value(Voting.instance.wolf_voting_place)
+    players.delete_if{|player| player.name == died}
+    players.each{|player| puts player.name}
+    puts "昨晩なくなった人は...#{died}さんです"
+    puts "疑われているのは#{key_has_max_value(Voting.instance.human_voting_place)}さんです"
   end
 
   #キャラクターの人数の初期化関数, trueを返すまで続く
@@ -161,5 +167,17 @@ class Jinrou
         player.confirmed
         yield(player)
       end
+    end
+
+    def key_has_max_value(hash)
+      max_value = 0
+      res = ""
+      hash.each do |key, value|
+        if max_value < value then
+          res = key
+          max_value = value
+        end
+      end
+      res
     end
   end
