@@ -52,6 +52,7 @@ class Normal < Player
   end
 end
 
+
 class Friend < Player
   attr_accessor :friends
   def initialize(role, name)

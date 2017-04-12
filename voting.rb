@@ -19,4 +19,10 @@ class Voting
     @wolf_voting_place.store(user, 0)
     @normal_voting_place.store(user, 0)
   end
+
+  def rem_user(user)
+    @human_voting_place.delete(user)
+    @wolf_voting_place.delete(user)
+    @normal_voting_place.delete(user)
+  end
 end
