@@ -182,6 +182,11 @@ class Jinrou
       Voting.instance.rem_user(died)
       players.each{|player| puts player.name}
       puts "昨晩なくなった人は...#{died}さんです"
-      puts "疑われているのは#{key_has_max_value(Voting.instance.human_voting_place)}さんです"
+      doubt = key_has_max_value(Voting.instance.human_voting_place)
+      if doubt.empty?
+        puts "疑われている人はいません"
+      else
+        puts "疑われているのは#{doubt}さんです"
+      end
     end
   end
