@@ -38,6 +38,15 @@ class Jinrou
     puts "皆さんで情報を交換して人狼を見つけてください"
     puts "会話時間は約#{((@wait_time / 60) + 0.5).to_i}分です"
     sleep(@wait_time)
+    confirm_players do |player|
+      if player.real_wolf? then
+        puts "殺すべき人間を処刑しましょう"
+      else
+        puts "人狼だと思われる人を処刑しましょう"
+      end
+      do_action_in_safe { player.after_noon_vote }
+    end
+    
   end
 
   #キャラクターの人数の初期化関数, trueを返すまで続く
@@ -200,7 +209,7 @@ class Jinrou
     died = key_has_max_value(Voting.instance.wolf_voting_place)
     died.shuffle!
     players.delete_if{|player| player.name == died[0]}
-    Voting.instance.rem_user(died)
+    Voting.instance.rem_user(died[0])
     players.each{|player| puts player.name}
     puts "昨晩なくなった人は... #{died[0]}さん です"
 

@@ -25,13 +25,13 @@ class Player
   def confirmed
   end
 
-  def after_noon_vote(user)
-    if Voting.instance.normal_voting_place.has_key(user) then
-      Voting.instance.normal_voting_place[user] += 1
-      true
-    else
-      false
+  def after_noon_vote()
+    dest = gets.chomp
+    while(dest.empty? or @name == dest or !Player.names.include?(dest)) do
+      "もう一度入力してください"
+      dest = gets.chomp
     end
+    Voting.instance.normal_voting_place[dest] += 1
   end
 
   def self.names
@@ -46,6 +46,7 @@ end
 # 村人(と多重人格)のみ
 class Normal < Player
   def action()
+    puts "あなたの夜のアクションは人狼だと疑う人に投票することです"
     puts "人狼だと疑う人を選択してください"
     dest = gets.chomp
     while(dest.empty? or @name == dest or !Player.names.include?(dest)) do
