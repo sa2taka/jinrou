@@ -124,7 +124,7 @@ class Jinrou
     true # 特に意味もないけど他との整合性を取るために
   end
 
-  #プレイヤーに確認させるための表示関数
+  # プレイヤーに確認させるための表示関数
   def first_contact
     @players.each do |player|
       @players.each do |compare|
@@ -139,16 +139,19 @@ class Jinrou
     end
   end
 
+  # ブロックがtrueを返すまで動作を続ける
   def do_action_in_safe
     while(!yield) do
       # FIXME こう書かないとエラーになるけど1行に収めたい
     end
   end
 
+  # 画面をクリアする
   def clear_screen
     system "clear" or system "cls"
   end
 
+  # プレイヤー一人ひとりに確認して特定の動作を行う
   def confirm_players
     @players.each do |player|
       do_action_in_safe do
@@ -166,6 +169,7 @@ class Jinrou
     end
   end
 
+  # hash内のvalueが最も大きい( < 等で比べる)時のキーを返す
   def key_has_max_value(hash)
     max_value = 0
     res = []
@@ -181,6 +185,7 @@ class Jinrou
     res
   end
 
+  # 夜の行動が終わったあとの動作
   def action_after_night
     died = key_has_max_value(Voting.instance.wolf_voting_place)
     died.shuffle!
