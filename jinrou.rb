@@ -34,6 +34,10 @@ class Jinrou
       player.action
     end
     action_after_night
+    puts "昼になりました"
+    puts "皆さんで情報を交換して人狼を見つけてください"
+    puts "会話時間は約#{((@wait_time / 60) + 0.5).to_i}分です"
+    sleep(@wait_time)
   end
 
   #キャラクターの人数の初期化関数, trueを返すまで続く
