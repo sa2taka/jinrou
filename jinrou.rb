@@ -1,7 +1,7 @@
 require "./player.rb"
 
 class Jinrou
-  attr_accessor :players, :player_num
+  attr_accessor :players, :player_num, :wait_time
 
   def initialize
     Character.instance.wolves.each_key do |wolf|
@@ -20,6 +20,7 @@ class Jinrou
       Voting.instance.add_user(name)
     end
     role_init
+    time_init
     first_contact
     main_loop
   end
@@ -115,13 +116,17 @@ class Jinrou
       if Character.instance.wolves.has_key?(roles[index].to_sym) then
         eval("@players << #{Character.instance.wolves[roles[index].to_sym]}.new(roles[index], @players_name[index])")
       else
-        puts "a"
-        puts "#{Character.instance.humans[roles[index].to_sym]}.new(roles[index], @players_name[index])"
-        puts "a"
         eval("@players << #{Character.instance.humans[roles[index].to_sym]}.new(roles[index], @players_name[index])")
       end
     end
     true # 特に意味もないけど他との整合性を取るために
+  end
+
+  # 昼の会話時間の設定
+  def time_init
+    puts "昼の会話の時間を設定してください[分](小数点可, デフォルト2分)"
+    @wait_time = gets.to_f() * 60
+    @wait_time = 2 * 60 if @wait_time <= 0.0
   end
 
   # プレイヤーに確認させるための表示関数
