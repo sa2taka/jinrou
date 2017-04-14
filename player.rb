@@ -107,32 +107,32 @@ class Friend < Player
       Voting.instance.human_voting_place[dest] += 1
     end
   end
+end
 
-  class Diviner < Player
-    attr_accessor :already_divined_persons
+class Diviner < Player
+  attr_accessor :already_divined_persons
 
-    def confirmed
-      puts "占った人一覧"
-      @already_divined_persons.each do |name, role|
-        puts "#{name} : #{role}"
-      end
-      if @already_divined_persons.to_i == 0 then
-        puts "占った人がいません"
-      end
+  def confirmed
+    puts "占った人一覧"
+    @already_divined_persons.each do |name, role|
+      puts "#{name} : #{role}"
     end
+    if @already_divined_persons.to_i == 0 then
+      puts "占った人がいません"
+    end
+  end
 
-    def action
-      puts "占う人の名前を入力してください"
+  def action
+    puts "占う人の名前を入力してください"
+    dest = gets.chomp
+    while dest.empty? or
+          @name == dest or
+          !Player.names_and_roles.has_key?(dest) or
+          @already_divined_persons.has_key?(dest) do
+      puts "もう一度正しく入力してください"
       dest = gets.chomp
-      while dest.empty? or
-            @name == dest or
-            !Player.names_and_roles.has_key?(dest) or
-            @already_divined_persons.has_key?(dest) do
-        puts "もう一度正しく入力してください"
-        dest = gets.chomp
-      end
-      role = @@names_and_roles[dest]
-      puts "#{dest} さんの役職は #{role} でした"
     end
+    role = @@names_and_roles[dest]
+    puts "#{dest} さんの役職は #{role} でした"
   end
 end
