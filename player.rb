@@ -63,18 +63,17 @@ end
 
 
 class Friend < Player
-  attr_accessor :friends
   def initialize(role, name)
     super(role, name)
-    @friends = []
-  end
-
-  def add_friend(name)
-    friends << name
   end
 
   def confirmed
     puts "あなたの仲間一覧"
+    friends = []
+    @@names_and_roles.each do |name, role|
+      friends << name if @name != name and @role == role
+    end
+
     friends.each do |friend|
       print "#{friend} "
     end
@@ -109,7 +108,7 @@ class Friend < Player
     end
   end
 
-  class Diviner << Player
+  class Diviner < Player
     attr_accessor :already_divined_persons
 
     def confirmed

@@ -134,12 +134,6 @@ class Jinrou
 
   # プレイヤーに確認させるための表示関数
   def first_contact
-    @players.each do |player|
-      @players.each do |compare|
-        next if compare.name == player.name
-        player.add_friend(compare.name) if player.role == compare.role and player.kind_of?(Friend)
-      end
-    end
     confirm_players do |player|
       puts "あなたの役職は...#{player.role}です"
       puts "確認したらEnterキーを押してください"
