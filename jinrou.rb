@@ -140,60 +140,62 @@ class Jinrou
   end
 
   def do_action_in_safe
-    while(!yield)do end
-    end
-
-    def clear_screen
-      system "clear" or system "cls"
-    end
-
-    def confirm_players
-      @players.each do |player|
-        do_action_in_safe do
-          clear_screen
-          puts "プレイヤー一覧"
-          @players.each do |player|
-            print "#{player.name} "
-          end
-          print "\n"
-          puts "あなたは#{player.name}さんですか?(y/N)"
-          gets.chomp == "y"
-        end
-        player.confirmed
-        yield(player)
-      end
-    end
-
-    def key_has_max_value(hash)
-      max_value = 0
-      res = []
-      hash.each do |key, value|
-        if max_value < value then
-          res = []
-          res << key
-          max_value = value
-        elsif max_value == value then
-          res << key
-        end
-      end
-      res
-    end
-
-    def action_after_night
-      died = key_has_max_value(Voting.instance.wolf_voting_place)
-      died.shuffle!
-      players.delete_if{|player| player.name == died[0]}
-      Voting.instance.rem_user(died)
-      players.each{|player| puts player.name}
-      puts "昨晩なくなった人は... #{died[0]}さん です"
-
-      doubt = key_has_max_value(Voting.instance.human_voting_place)
-      if doubt.empty?
-        puts "疑われている人はいません"
-      else
-        print "疑われているのは "
-        doubt.each{|item| print item, "さん "}
-        puts "です"
-      end
+    while(!yield) do
+      # FIXME こう書かないとエラーになるけど1行に収めたい
     end
   end
+
+  def clear_screen
+    system "clear" or system "cls"
+  end
+
+  def confirm_players
+    @players.each do |player|
+      do_action_in_safe do
+        clear_screen
+        puts "プレイヤー一覧"
+        @players.each do |player|
+          print "#{player.name} "
+        end
+        print "\n"
+        puts "あなたは#{player.name}さんですか?(y/N)"
+        gets.chomp == "y"
+      end
+      player.confirmed
+      yield(player)
+    end
+  end
+
+  def key_has_max_value(hash)
+    max_value = 0
+    res = []
+    hash.each do |key, value|
+      if max_value < value then
+        res = []
+        res << key
+        max_value = value
+      elsif max_value == value then
+        res << key
+      end
+    end
+    res
+  end
+
+  def action_after_night
+    died = key_has_max_value(Voting.instance.wolf_voting_place)
+    died.shuffle!
+    players.delete_if{|player| player.name == died[0]}
+    Voting.instance.rem_user(died)
+    players.each{|player| puts player.name}
+    puts "昨晩なくなった人は... #{died[0]}さん です"
+
+    doubt = key_has_max_value(Voting.instance.human_voting_place)
+    if doubt.empty?
+      puts "疑われている人はいません"
+    else
+      print "疑われているのは "
+      doubt.each{|item| print item, "さん "}
+      puts "です"
+    end
+  end
+end
