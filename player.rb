@@ -25,7 +25,7 @@ class Player
   def confirmed
   end
 
-  def night_vote(user)
+  def after_noon_vote(user)
     if Voting.instance.normal_voting_place.has_key(user) then
       Voting.instance.normal_voting_place[user] += 1
       true
