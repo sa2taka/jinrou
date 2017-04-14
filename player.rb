@@ -69,15 +69,15 @@ class Friend < Player
 
   def confirmed
     puts "あなたの仲間一覧"
-    friends = []
+    @friends = []
     @@names_and_roles.each do |name, role|
-      friends << name if @name != name and @role == role
+      @friends << name if @name != name and @role == role
     end
 
-    friends.each do |friend|
+    @friends.each do |friend|
       print "#{friend} "
     end
-    print "仲間はいません" if friends.length == 0
+    print "仲間はいません" if @friends.length == 0
     print "\n"
   end
 
@@ -92,6 +92,8 @@ class Friend < Player
     end
     puts "人を選択してください"
     dest = gets.chomp
+    # ここでの@friendsは必ずconfirmedの後に実行されるので更新されたデータが入る
+    # 人のクラスの内部事情に詳しいFriendクラスを許して
     while dest.empty? or @name == dest or !Player.names_and_roles.has_key?(dest) or @friends.include?(dest) do
       "もう一度入力してください"
       dest = gets.chomp
@@ -112,12 +114,17 @@ end
 class Diviner < Player
   attr_accessor :already_divined_persons
 
+  def initialize(role, name)
+    @already_divined_persons = {}
+    super(role, name)
+  end
+
   def confirmed
     puts "占った人一覧"
     @already_divined_persons.each do |name, role|
       puts "#{name} : #{role}"
     end
-    if @already_divined_persons.to_i == 0 then
+    if @already_divined_persons.length == 0 then
       puts "占った人がいません"
     end
   end
@@ -133,6 +140,9 @@ class Diviner < Player
       dest = gets.chomp
     end
     role = @@names_and_roles[dest]
+    @already_divined_persons[dest] = role
     puts "#{dest} さんの役職は #{role} でした"
+    puts "確認したらEnterキーを押してください"
+    gets
   end
 end

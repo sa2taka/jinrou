@@ -201,7 +201,6 @@ class Jinrou
     died = key_has_max_value(Voting.instance.wolf_voting_place)
     died.shuffle!
     kill_player(died[0])
-    players.each{|player| puts player.name}
     puts "昨晩なくなった人は... #{died[0]}さん です"
 
     # 疑われている人を表示する処理
@@ -236,9 +235,19 @@ class Jinrou
         temp_voting_place[one] = 0
       end
       clear_screen
-      puts "処刑される人が二人以上になりましたのでもう一度投票してください"
+      temp_voting_place.each_key{ |name| print "#{name}, "}
+      print "\n"
+      puts "以上の人が選択されました。この中から更に処刑する人を選んでください"
       sleep(2)
       confirm_players do |player|
+        if temp_voting_place.has_key?(player.name) then
+          puts "あなたに選択の権利はありません"
+          sleep(2)
+          next
+        end
+        puts "処刑される人々の選択肢"
+        temp_voting_place.each_key{ |name| print "#{name}, "}
+        print "\n"
         if player.real_wolf? then
           puts "殺すべき人間を処刑しましょう"
         else
@@ -246,7 +255,7 @@ class Jinrou
         end
         do_action_in_safe do
           dest = gets.chomp
-          while(dest.empty? or player.name == dest or !Player.names_and_roles.has_key?(dest)) do
+          while(dest.empty? or player.name == dest or !temp_voting_place.has_key?(dest)) do
             "もう一度入力してください"
             dest = gets.chomp
           end
@@ -261,6 +270,8 @@ class Jinrou
     end
     kill_player(punished[0])
     puts "処刑された人は... #{punished_one}さん です"
+    puts "確認したらEnterを押してください"
+    gets
   end
 
   def action_in_game_end
