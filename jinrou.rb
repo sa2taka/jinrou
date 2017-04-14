@@ -187,6 +187,7 @@ class Jinrou
 
   # 夜の行動が終わったあとの動作
   def action_after_night
+    # 最も投票された人のうち一人をランダムに殺す処理
     died = key_has_max_value(Voting.instance.wolf_voting_place)
     died.shuffle!
     players.delete_if{|player| player.name == died[0]}
@@ -194,6 +195,7 @@ class Jinrou
     players.each{|player| puts player.name}
     puts "昨晩なくなった人は... #{died[0]}さん です"
 
+    # 疑われている人を表示する処理
     doubt = key_has_max_value(Voting.instance.human_voting_place)
     if doubt.empty?
       puts "疑われている人はいません"
