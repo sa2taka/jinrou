@@ -29,11 +29,23 @@ class Jinrou
   private
 
   def main_loop
-    action_in_night
-    action_after_night
-
-    action_in_noon
-
+    while true do
+      action_in_night
+      action_after_night
+      break if end_game?
+      action_in_noon
+      break if end_game?
+    end
+    if count_wolf_num == 0
+      puts "Human's team win!"
+    else
+      puts "Wolf's team win!"
+    end
+    puts "亡くなった人(上から亡くなった順)"
+    @dead_players.each{ |player| puts "#{player.name} : #{player.role}" }
+    puts "生きている人(上から登録順)"
+    @players.each{ |player| puts "#{player.name} : #{player.role}" }
+    puts "Game end"
   end
 
   #キャラクターの人数の初期化関数, trueを返すまで続く
@@ -267,9 +279,20 @@ class Jinrou
   end
 
   def kill_player(player_name)
-    players.each { |player| dead_player << player if player.name == player}
-    players.delete_if{|player| player.name == player_name}
+    @players.each { |player| @dead_players << player if player.name == player_name}
+    @players.delete_if{|player| player.name == player_name}
     Voting.instance.rem_user(player_name)
     Player.rem_user(player_name)
+  end
+
+  def end_game?
+    wolf_num = count_wolf_num
+    wolf_num == 0 or wolf_num >= players.length - wolf_num
+  end
+
+  def count_wolf_num
+    wolf_num = 0
+    @players.each { |player| wolf_num += 1 if player.role.to_s == "wolf" }
+    wolf_num
   end
 end

@@ -6,4 +6,4 @@ Character.instance.wolves = wolves
 Character.instance.humans = humans
 Character.instance.opposite = []
 
-game = Jinrou.new
+Jinrou.new
