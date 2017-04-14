@@ -1,7 +1,7 @@
 require "./player.rb"
 
 class Jinrou
-  attr_accessor :players, :player_num, :wait_time
+  attr_accessor :players, :player_num, :wait_time, :dead_players
 
   def initialize
     Character.instance.wolves.each_key do |wolf|
@@ -14,6 +14,7 @@ class Jinrou
     do_action_in_safe{ character_init }
     do_action_in_safe do
       @players_name = []
+      @dead_players = []
       name_init
     end
     @players_name.each do |name|
@@ -28,14 +29,11 @@ class Jinrou
   private
 
   def main_loop
-    confirm_players do |player|
-      puts "あなたは#{player.role}です。"
-      puts "これから夜のアクションを行ってください"
-      player.action
-    end
+    action_in_night
     action_after_night
+
     action_in_noon
-    p players
+
   end
 
   #キャラクターの人数の初期化関数, trueを返すまで続く
@@ -192,12 +190,20 @@ class Jinrou
     res
   end
 
+  def action_in_night
+    confirm_players do |player|
+      puts "あなたは#{player.role}です。"
+      puts "これから夜のアクションを行ってください"
+      player.action
+    end
+  end
+
   # 夜の行動が終わったあとの動作
   def action_after_night
     # 最も投票された人のうち一人をランダムに殺す処理
     died = key_has_max_value(Voting.instance.wolf_voting_place)
     died.shuffle!
-    rem_user(died[0])
+    kill_player(died[0])
     players.each{|player| puts player.name}
     puts "昨晩なくなった人は... #{died[0]}さん です"
 
@@ -256,13 +262,14 @@ class Jinrou
     else
       punished_one = punished[0]
     end
-    rem_user(punished[0])
+    kill_player(punished[0])
     puts "処刑された人は... #{punished_one}さん です"
   end
 
-  def rem_user(user)
-    players.delete_if{|player| player.name == user}
-    Voting.instance.rem_user(user)
-    Player.rem_user(user)
+  def kill_player(player_name)
+    players.each { |player| dead_player << player if player.name == player}
+    players.delete_if{|player| player.name == player_name}
+    Voting.instance.rem_user(player_name)
+    Player.rem_user(player_name)
   end
 end
