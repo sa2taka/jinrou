@@ -36,16 +36,7 @@ class Jinrou
       action_in_noon
       break if end_game?
     end
-    if count_wolf_num == 0
-      puts "Human's team win!"
-    else
-      puts "Wolf's team win!"
-    end
-    puts "亡くなった人(上から亡くなった順)"
-    @dead_players.each{ |player| puts "#{player.name} : #{player.role}" }
-    puts "生きている人(上から登録順)"
-    @players.each{ |player| puts "#{player.name} : #{player.role}" }
-    puts "Game end"
+    action_in_game_end
   end
 
   #キャラクターの人数の初期化関数, trueを返すまで続く
@@ -276,6 +267,19 @@ class Jinrou
     end
     kill_player(punished[0])
     puts "処刑された人は... #{punished_one}さん です"
+  end
+
+  def action_in_game_end
+    if count_wolf_num == 0
+      puts "Human's team win!"
+    else
+      puts "Wolf's team win!"
+    end
+    puts "亡くなった人(上から亡くなった順)"
+    @dead_players.each{ |player| puts "#{player.name} : #{player.role}" }
+    puts "生きている人(上から登録順)"
+    @players.each{ |player| puts "#{player.name} : #{player.role}" }
+    puts "Game end"
   end
 
   def kill_player(player_name)
