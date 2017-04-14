@@ -27,7 +27,7 @@ class Player
 
   def after_noon_vote()
     dest = gets.chomp
-    while(dest.empty? or @name == dest or !Player.names.include?(dest)) do
+    while(dest.empty? or @name == dest or !Player.names_and_roles.has_key?(dest)) do
       "もう一度入力してください"
       dest = gets.chomp
     end
@@ -40,6 +40,10 @@ class Player
 
   def self.reset
     @@names_and_roles = []
+  end
+
+  def self.rem_user(user)
+    @@names_and_roles.delete_if{|key, value| key == user}
   end
 end
 

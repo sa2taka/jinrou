@@ -34,19 +34,8 @@ class Jinrou
       player.action
     end
     action_after_night
-    puts "昼になりました"
-    puts "皆さんで情報を交換して人狼を見つけてください"
-    puts "会話時間は約#{((@wait_time / 60) + 0.5).to_i}分です"
-    sleep(@wait_time)
-    confirm_players do |player|
-      if player.real_wolf? then
-        puts "殺すべき人間を処刑しましょう"
-      else
-        puts "人狼だと思われる人を処刑しましょう"
-      end
-      do_action_in_safe { player.after_noon_vote }
-    end
-    
+    action_in_noon
+    p players
   end
 
   #キャラクターの人数の初期化関数, trueを返すまで続く
@@ -160,7 +149,7 @@ class Jinrou
   # ブロックがtrueを返すまで動作を続ける
   def do_action_in_safe
     while(!yield) do
-      # FIXME こう書かないとエラーになるけど1行に収めたい
+      # FIXME こう書かないとエラーになるけど1行に収めたい(do endなら1行で収まる)
     end
   end
 
@@ -208,8 +197,7 @@ class Jinrou
     # 最も投票された人のうち一人をランダムに殺す処理
     died = key_has_max_value(Voting.instance.wolf_voting_place)
     died.shuffle!
-    players.delete_if{|player| player.name == died[0]}
-    Voting.instance.rem_user(died[0])
+    rem_user(died[0])
     players.each{|player| puts player.name}
     puts "昨晩なくなった人は... #{died[0]}さん です"
 
@@ -222,5 +210,59 @@ class Jinrou
       doubt.each{|item| print item, "さん "}
       puts "です"
     end
+  end
+
+  def action_in_noon
+    puts "夜が明け昼になりました"
+    puts "皆さんで情報を交換して人狼を見つけてください"
+    puts "会話時間は約#{((@wait_time / 60) + 0.5).to_i}分です"
+    sleep(@wait_time)
+    confirm_players do |player|
+      if player.real_wolf? then
+        puts "殺すべき人間を処刑しましょう"
+      else
+        puts "人狼だと思われる人を処刑しましょう"
+      end
+      do_action_in_safe { player.after_noon_vote }
+    end
+    punished = key_has_max_value(Voting.instance.normal_voting_place)
+    punished_one = ""
+    if punished.length > 1 then
+      temp_voting_place = {}
+      punished.each do | one |
+        temp_voting_place[one] = 0
+      end
+      clear_screen
+      puts "処刑される人が二人以上になりましたのでもう一度投票してください"
+      sleep(2)
+      confirm_players do |player|
+        if player.real_wolf? then
+          puts "殺すべき人間を処刑しましょう"
+        else
+          puts "人狼だと思われる人を処刑しましょう"
+        end
+        do_action_in_safe do
+          dest = gets.chomp
+          while(dest.empty? or player.name == dest or !Player.names_and_roles.has_key?(dest)) do
+            "もう一度入力してください"
+            dest = gets.chomp
+          end
+          temp_voting_place[dest] += 1
+        end
+      end
+      punished = key_has_max_value(temp_voting_place)
+      punished.shuffle!
+      punished_one = punished[0]
+    else
+      punished_one = punished[0]
+    end
+    rem_user(punished[0])
+    puts "処刑された人は... #{punished_one}さん です"
+  end
+
+  def rem_user(user)
+    players.delete_if{|player| player.name == user}
+    Voting.instance.rem_user(user)
+    Player.rem_user(user)
   end
 end
