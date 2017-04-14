@@ -25,7 +25,7 @@ class Player
   def confirmed
   end
 
-  def after_noon_vote()
+  def after_noon_vote
     dest = gets.chomp
     while(dest.empty? or @name == dest or !Player.names_and_roles.has_key?(dest)) do
       "もう一度入力してください"
@@ -49,11 +49,11 @@ end
 
 # 村人(と多重人格)のみ
 class Normal < Player
-  def action()
+  def action
     puts "あなたの夜のアクションは人狼だと疑う人に投票することです"
     puts "人狼だと疑う人を選択してください"
     dest = gets.chomp
-    while(dest.empty? or @name == dest or !Player.names_and_roles.has_key?(dest)) do
+    while dest.empty? or @name == dest or !Player.names_and_roles.has_key?(dest) do
       "もう一度入力してください"
       dest = gets.chomp
     end
@@ -82,7 +82,7 @@ class Friend < Player
     print "\n"
   end
 
-  def action()
+  def action
     print "あなたの夜のアクションは"
     if wolf? then
       puts "殺す人を投票で決めることです"
@@ -93,19 +93,47 @@ class Friend < Player
     end
     puts "人を選択してください"
     dest = gets.chomp
-    while(dest.empty? or @name == dest or !Player.names_and_roles.has_key?(dest) or @friends.include?(dest)) do
+    while dest.empty? or @name == dest or !Player.names_and_roles.has_key?(dest) or @friends.include?(dest) do
       "もう一度入力してください"
       dest = gets.chomp
     end
     if wolf? then
       puts "1〜3の値を入力してください"
       value = -1
-      while(value <= 0 or value > 3) do
+      while value <= 0 or value > 3 do
         value = gets.to_i
       end
       Voting.instance.wolf_voting_place[dest] += value
     else
       Voting.instance.human_voting_place[dest] += 1
+    end
+  end
+
+  class Diviner << Player
+    attr_accessor :already_divined_persons
+
+    def confirmed
+      puts "占った人一覧"
+      @already_divined_persons.each do |name, role|
+        puts "#{name} : #{role}"
+      end
+      if @already_divined_persons.to_i == 0 then
+        puts "占った人がいません"
+      end
+    end
+
+    def action
+      puts "占う人の名前を入力してください"
+      dest = gets.chomp
+      while dest.empty? or
+            @name == dest or
+            !Player.names_and_roles.has_key?(dest) or
+            @already_divined_persons.has_key?(dest) do
+        puts "もう一度正しく入力してください"
+        dest = gets.chomp
+      end
+      role = @@names_and_roles[dest]
+      puts "#{dest} さんの役職は #{role} でした"
     end
   end
 end
