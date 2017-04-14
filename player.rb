@@ -18,6 +18,10 @@ class Player
     end
   end
 
+  def real_wolf?
+    Character.instance.wolves.include?(@role.to_sym)
+  end
+
   def confirmed
   end
 
