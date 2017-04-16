@@ -23,6 +23,14 @@ class Player
     Character.instance.wolves.include?(@role.to_sym)
   end
 
+  def wolf?(role)
+    if Character.instance.opposite.include?(role.to_sym) then
+      !Character.instance.wolves.include?(role.to_sym)
+    else
+      Character.instance.wolves.include?(role.to_sym)
+    end
+  end
+
   def confirmed
   end
 
