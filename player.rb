@@ -4,6 +4,7 @@ require "./character.rb"
 class Player
   attr_accessor :name, :role
   @@names_and_roles = {}
+  @@dead_names_and_roles = {}
   def initialize(role, name)
     @name = name
     @@names_and_roles[name] = role
@@ -43,6 +44,7 @@ class Player
   end
 
   def self.rem_user(user)
+    @@dead_names_and_roles[user] = @@names_and_roles[user]
     @@names_and_roles.delete_if{|key, value| key == user}
   end
 end
