@@ -60,7 +60,7 @@ class Jinrou
       do_action_in_safe do
         eval("
         @#{wolf} = gets.to_i()
-        @#{wolf} >= 0 and @#{wolf} <= 2 and remaining + @#{wolf} <= @player_num
+        @#{wolf} >= 0 and @#{wolf} <= 2 and @#{wolf} <= remaining
         ")
       end
       eval("remaining -= @#{wolf}")
@@ -72,7 +72,7 @@ class Jinrou
       do_action_in_safe do
         eval("
         @#{human} = gets.to_i()
-        @#{human} >= 0 and @#{human} <= 2 and remaining + @#{human} <= @player_num
+        @#{human} >= 0 and @#{human} <= 2 and @#{human} <= remaining
         ")
       end
       eval("remaining -= @#{human}")

@@ -28,7 +28,7 @@ class Player
 
   def after_noon_vote
     dest = gets.chomp
-    while(dest.empty? or @name == dest or @@names_and_roles.names_and_roles.has_key?(dest)) do
+    while(dest.empty? or @name == dest or !@@names_and_roles.has_key?(dest)) do
       "もう一度入力してください"
       dest = gets.chomp
     end
