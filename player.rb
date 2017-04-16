@@ -53,7 +53,7 @@ class Normal < Player
     puts "あなたの夜のアクションは人狼だと疑う人に投票することです"
     puts "人狼だと疑う人を選択してください"
     dest = gets.chomp
-    while dest.empty? or @name == dest or !Player.names_and_roles.has_key?(dest) do
+    while dest.empty? or @name == dest or @@names_and_roles.has_key?(dest) do
       "もう一度入力してください"
       dest = gets.chomp
     end
@@ -94,7 +94,7 @@ class Friend < Player
     dest = gets.chomp
     # ここでの@friendsは必ずconfirmedの後に実行されるので更新されたデータが入る
     # 人のクラスの内部事情に詳しいFriendクラスを許して
-    while dest.empty? or @name == dest or !Player.names_and_roles.has_key?(dest) or @friends.include?(dest) do
+    while dest.empty? or @name == dest or @@names_and_roles.has_key?(dest) or @friends.include?(dest) do
       "もう一度入力してください"
       dest = gets.chomp
     end
