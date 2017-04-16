@@ -35,17 +35,23 @@ class Player
     Voting.instance.normal_voting_place[dest] += 1
   end
 
-  def self.names_and_roles
-    @@names_and_roles
-  end
+  class << self
+    def names_and_roles
+      @@names_and_roles
+    end
 
-  def self.reset
-    @@names_and_roles = []
-  end
+    def dead_names_and_roles
+      @@dead_names_and_roles
+    end
 
-  def self.rem_user(user)
-    @@dead_names_and_roles[user] = @@names_and_roles[user]
-    @@names_and_roles.delete_if{|key, value| key == user}
+    def reset
+      @@names_and_roles = []
+    end
+
+    def rem_user(user)
+      @@dead_names_and_roles[user] = @@names_and_roles[user]
+      @@names_and_roles.delete_if{|key, value| key == user}
+    end
   end
 end
 
