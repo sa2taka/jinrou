@@ -1,7 +1,7 @@
 require "./player.rb"
 
 class Jinrou
-  attr_accessor :players, :player_num, :wait_time, :dead_players
+  attr_accessor :players, :player_num, :wait_time
 
   def initialize
     Character.instance.wolves.each_key do |wolf|
@@ -14,7 +14,6 @@ class Jinrou
     do_action_in_safe{ character_init }
     do_action_in_safe do
       @players_name = []
-      @dead_players = []
       name_init
     end
     @players_name.each do |name|
@@ -281,14 +280,13 @@ class Jinrou
       puts "Wolf's team win!"
     end
     puts "亡くなった人(上から亡くなった順)"
-    @dead_players.each{ |player| puts "#{player.name} : #{player.role}" }
+    Players.dead_names_and_roles.each{ |name, role| puts "#{name} : #{role}" }
     puts "生きている人(上から登録順)"
     @players.each{ |player| puts "#{player.name} : #{player.role}" }
     puts "Game end"
   end
 
   def kill_player(player_name)
-    @players.each { |player| @dead_players << player if player.name == player_name}
     @players.delete_if{|player| player.name == player_name}
     Voting.instance.rem_user(player_name)
     Player.rem_user(player_name)
