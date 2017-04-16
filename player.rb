@@ -23,7 +23,7 @@ class Player
     Character.instance.wolves.include?(@role.to_sym)
   end
 
-  def wolf?(role)
+  def is_role_wolf?(role)
     if Character.instance.opposite.include?(role.to_sym) then
       !Character.instance.wolves.include?(role.to_sym)
     else
@@ -157,7 +157,8 @@ class Diviner < Player
     end
     role = @@names_and_roles[dest]
     @already_divined_persons[dest] = role
-    puts "#{dest} さんの役職は #{role} でした"
+    print_role = is_role_wolf?(role) ? "人狼" : "人間"
+    puts "#{dest} さんの役職は #{print_role} でした"
     puts "確認したらEnterキーを押してください"
     gets
   end
@@ -166,8 +167,9 @@ end
 class SpiritMedium < Normal
   def confirmed
     puts "亡くなった人とその役職"
-    @@dead_names_and_roles do |name, role|
-      puts "#{name} : #{role}"
+    @@dead_names_and_roles.each do |name, role|
+      print_role = is_role_wolf?(role) ? "人狼" : "人間"
+      puts "#{name} : #{print_role}"
     end
     if @@dead_names_and_roles.length == 0 then
       puts "亡くなった人がいません"
