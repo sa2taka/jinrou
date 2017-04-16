@@ -154,3 +154,15 @@ class Diviner < Player
     gets
   end
 end
+
+class SpiritMedium < Normal
+  def confirmed
+    puts "亡くなった人とその役職"
+    @@dead_names_and_roles do |name, role|
+      puts "#{name} : #{role}"
+    end
+    if @@dead_names_and_roles.length == 0 then
+      puts "亡くなった人がいません"
+    end
+  end
+end
