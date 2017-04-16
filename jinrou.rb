@@ -280,7 +280,7 @@ class Jinrou
       puts "Wolf's team win!"
     end
     puts "亡くなった人(上から亡くなった順)"
-    Players.dead_names_and_roles.each{ |name, role| puts "#{name} : #{role}" }
+    Player.dead_names_and_roles.each{ |name, role| puts "#{name} : #{role}" }
     puts "生きている人(上から登録順)"
     @players.each{ |player| puts "#{player.name} : #{player.role}" }
     puts "Game end"
