@@ -36,8 +36,8 @@ class Player
 
   def after_noon_vote
     dest = gets.chomp
-    while(dest.empty? or @name == dest or !@@names_and_roles.has_key?(dest)) do
-      "もう一度入力してください"
+    while dest.empty? or @name == dest or !@@names_and_roles.has_key?(dest)  do
+      puts "もう一度入力してください"
       dest = gets.chomp
     end
     Voting.instance.normal_voting_place[dest] += 1
@@ -58,7 +58,7 @@ class Player
 
     def rem_user(user)
       @@dead_names_and_roles[user] = @@names_and_roles[user]
-      @@names_and_roles.delete_if{|key, value| key == user}
+      @@names_and_roles.delete_if { |key, value| key == user }
     end
   end
 end
@@ -69,8 +69,8 @@ class Normal < Player
     puts "あなたの夜のアクションは人狼だと疑う人に投票することです"
     puts "人狼だと疑う人を選択してください"
     dest = gets.chomp
-    while dest.empty? or @name == dest or !@@names_and_roles.has_key?(dest) do
-      "もう一度入力してください"
+    while dest.empty? or @name == dest or !@@names_and_roles.key?(dest) do
+      puts "もう一度入力してください"
       dest = gets.chomp
     end
     Voting.instance.human_voting_place[dest] += 1
@@ -93,7 +93,7 @@ class Friend < Player
     @friends.each do |friend|
       print "#{friend} "
     end
-    print "仲間はいません" if @friends.length == 0
+    print "仲間はいません" if @friends.length.zero?
     print "\n"
   end
 
@@ -110,8 +110,8 @@ class Friend < Player
     dest = gets.chomp
     # ここでの@friendsは必ずconfirmedの後に実行されるので更新されたデータが入る
     # 人のクラスの内部事情に詳しいFriendクラスを許して
-    while dest.empty? or @name == dest or !@@names_and_roles.has_key?(dest) or @friends.include?(dest) do
-      "もう一度入力してください"
+    while dest.empty? or @name == dest or !@@names_and_roles.key?(dest) or @friends.include?(dest) do
+      puts "もう一度入力してください"
       dest = gets.chomp
     end
     if wolf? then
@@ -140,7 +140,7 @@ class Diviner < Player
     @already_divined_persons.each do |name, role|
       puts "#{name} : #{role}"
     end
-    if @already_divined_persons.length == 0 then
+    if @already_divined_persons.length.zero?then
       puts "占った人がいません"
     end
   end
@@ -150,8 +150,8 @@ class Diviner < Player
     dest = gets.chomp
     while dest.empty? or
           @name == dest or
-          !Player.names_and_roles.has_key?(dest) or
-          @already_divined_persons.has_key?(dest) do
+          !Player.names_and_roles.key?(dest) or
+          @already_divined_persons.key?(dest) do
       puts "もう一度正しく入力してください"
       dest = gets.chomp
     end
@@ -171,7 +171,7 @@ class SpiritMedium < Normal
       print_role = is_role_wolf?(role) ? "人狼" : "人間"
       puts "#{name} : #{print_role}"
     end
-    if @@dead_names_and_roles.length == 0 then
+    if @@dead_names_and_roles.length.zero? then
       puts "亡くなった人がいません"
     end
   end

@@ -28,7 +28,7 @@ class Jinrou
   private
 
   def main_loop
-    while true do
+    loop do
       action_in_night
       action_after_night
       break if end_game?
@@ -38,18 +38,18 @@ class Jinrou
     action_in_game_end
   end
 
-  #キャラクターの人数の初期化関数, trueを返すまで続く
+  # キャラクターの人数の初期化関数, trueを返すまで続く
   def character_init
     puts "プレイヤーの人数を指定してください"
     do_action_in_safe do
-      @player_num = gets.to_i()
+      @player_num = gets.to_i
       @player_num > 0 and @player_num <= 9
     end
     remaining = @player_num
     # 人狼は必ず存在するので特別枠
     puts "人狼の人数を指定してください"
     do_action_in_safe do
-      @wolf = gets.to_i()
+      @wolf = gets.to_i
       @wolf > 0 and @wolf <= @player_num / 3
     end
     remaining -= @wolf
@@ -77,9 +77,9 @@ class Jinrou
       end
       eval("remaining -= @#{human}")
     end
-    #市民も特別な枠とする
+    # 市民も特別な枠とする
     @citizen = remaining
-    self.instance_variables.each do |variable|
+    instance_variables.each do |variable|
       puts "#{variable.to_s.gsub!(/@/, "")} : #{instance_variable_get(variable)}"
     end
     puts "でよろしいでしょうか?(y/N)"
@@ -115,7 +115,7 @@ class Jinrou
     @players = []
     roles.shuffle!
     @players_name.each_index do |index|
-      if Character.instance.wolves.has_key?(roles[index].to_sym) then
+      if Character.instance.wolves.key?(roles[index].to_sym) then
         eval("@players << #{Character.instance.wolves[roles[index].to_sym]}.new(roles[index], @players_name[index])")
       else
         eval("@players << #{Character.instance.humans[roles[index].to_sym]}.new(roles[index], @players_name[index])")
@@ -127,7 +127,7 @@ class Jinrou
   # 昼の会話時間の設定
   def time_init
     puts "昼の会話の時間を設定してください[分](小数点可, デフォルト2分)"
-    @wait_time = gets.to_f() * 60
+    @wait_time = gets.to_f * 60
     @wait_time = 2 * 60 if @wait_time <= 0.0
   end
 
@@ -142,9 +142,7 @@ class Jinrou
 
   # ブロックがtrueを返すまで動作を続ける
   def do_action_in_safe
-    while(!yield) do
-      # FIXME こう書かないとエラーになるけど1行に収めたい(do endなら1行で収まる)
-    end
+    until(yield) do  end # FIXME {}で治したい
   end
 
   # 画面をクリアする
@@ -208,7 +206,7 @@ class Jinrou
       puts "疑われている人はいません"
     else
       print "疑われているのは "
-      doubt.each{|item| print item, "さん "}
+      doubt.each { |item| print item, "さん "}
       puts "です"
     end
   end
@@ -227,25 +225,24 @@ class Jinrou
       do_action_in_safe { player.after_noon_vote }
     end
     punished = key_has_max_value(Voting.instance.normal_voting_place)
-    punished_one = ""
     if punished.length > 1 then
       temp_voting_place = {}
-      punished.each do | one |
+      punished.each do |one|
         temp_voting_place[one] = 0
       end
       clear_screen
-      temp_voting_place.each_key{ |name| print "#{name}, "}
+      temp_voting_place.each_key { |name| print "#{name}, " }
       print "\n"
       puts "以上の人が選択されました。この中から更に処刑する人を選んでください"
       sleep(2)
       confirm_players do |player|
-        if temp_voting_place.has_key?(player.name) then
+        if temp_voting_place.key?(player.name) then
           puts "あなたに選択の権利はありません"
           sleep(2)
           next
         end
         puts "処刑される人々の選択肢"
-        temp_voting_place.each_key{ |name| print "#{name}, "}
+        temp_voting_place.each_key { |name| print "#{name}, " }
         print "\n"
         if player.real_wolf? then
           puts "殺すべき人間を処刑しましょう"
@@ -254,8 +251,8 @@ class Jinrou
         end
         do_action_in_safe do
           dest = gets.chomp
-          while(dest.empty? or player.name == dest or !temp_voting_place.has_key?(dest)) do
-            "もう一度入力してください"
+          while dest.empty? or player.name == dest or !temp_voting_place.key?(dest) do
+            puts "もう一度入力してください"
             dest = gets.chomp
           end
           temp_voting_place[dest] += 1
@@ -263,10 +260,8 @@ class Jinrou
       end
       punished = key_has_max_value(temp_voting_place)
       punished.shuffle!
-      punished_one = punished[0]
-    else
-      punished_one = punished[0]
     end
+    punished_one = punished[0]
     kill_player(punished[0])
     puts "処刑された人は... #{punished_one}さん です"
     puts "確認したらEnterを押してください"
@@ -274,27 +269,27 @@ class Jinrou
   end
 
   def action_in_game_end
-    if count_wolf_num == 0
+    if count_wolf_num.zero?
       puts "Human's team win!"
     else
       puts "Wolf's team win!"
     end
     puts "亡くなった人(上から亡くなった順)"
-    Player.dead_names_and_roles.each{ |name, role| puts "#{name} : #{role}" }
+    Player.dead_names_and_roles.each { |name, role| puts "#{name} : #{role}" }
     puts "生きている人(上から登録順)"
-    @players.each{ |player| puts "#{player.name} : #{player.role}" }
+    @players.each { |player| puts "#{player.name} : #{player.role}" }
     puts "Game end"
   end
 
   def kill_player(player_name)
-    @players.delete_if{|player| player.name == player_name}
+    @players.delete_if { |player| player.name == player_name }
     Voting.instance.rem_user(player_name)
     Player.rem_user(player_name)
   end
 
   def end_game?
     wolf_num = count_wolf_num
-    wolf_num == 0 or wolf_num >= players.length - wolf_num
+    wolf_num.zero? or wolf_num >= players.length - wolf_num
   end
 
   def count_wolf_num
