@@ -1,6 +1,6 @@
 require "./jinrou.rb"
 wolves = { wolf: :Friend }
-humans = { citizen: :Normal, 労働組合: :Diviner, お局様: :SpiritMedium}
+humans = { citizen: :Normal}
 
 Character.instance.wolves = wolves
 Character.instance.humans = humans

@@ -5,6 +5,8 @@ class Player
   attr_accessor :name, :role
   @@names_and_roles = {}
   @@dead_names_and_roles = {}
+  @@saved_person = {}
+
   def initialize(role, name)
     @name = name
     @@names_and_roles[name] = role
@@ -52,6 +54,10 @@ class Player
       @@dead_names_and_roles
     end
 
+    def saved_person
+      @@saved_person
+    end
+
     def reset
       @@names_and_roles = []
     end
@@ -59,6 +65,10 @@ class Player
     def rem_user(user)
       @@dead_names_and_roles[user] = @@names_and_roles[user]
       @@names_and_roles.delete_if { |key, value| key == user }
+    end
+
+    def reset_in_night
+      saved_person = []
     end
   end
 end
@@ -120,6 +130,7 @@ class Friend < Player
       while value <= 0 or value > 3 do
         value = gets.to_i
       end
+      value = 0 if Player.saved_person.include?(dest)
       Voting.instance.wolf_voting_place[dest] += value
     else
       Voting.instance.human_voting_place[dest] += 1
@@ -174,5 +185,18 @@ class SpiritMedium < Normal
     if @@dead_names_and_roles.length.zero? then
       puts "亡くなった人がいません"
     end
+  end
+end
+
+class Knight < Player
+  def action
+    puts "守る人を選択してください"
+    while dest.empty? or
+          @name == dest or
+          !Player.names_and_roles.key?(dest) do
+            puts "もう一度正しく入力してください"
+            dest = gets.chomp
+    end
+    saved_person << dest
   end
 end
