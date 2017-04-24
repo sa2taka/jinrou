@@ -3,14 +3,14 @@ require "./character.rb"
 
 class Player
   attr_accessor :name, :role
-  @names_and_roles = {}
+  @players = []
   @dead_names_and_roles = {}
   @saved_person = []
 
   def initialize(role, name)
     @name = name
-    Player.names_and_roles[name] = role
     @role = role
+    Player.players << self
   end
 
   def wolf?
@@ -38,7 +38,7 @@ class Player
 
   def after_noon_vote
     dest = gets.chomp
-    while dest.empty? or @name == dest or !@names_and_roles.has_key?(dest)  do
+    while dest.empty? or @name == dest or !Player.player?(dest)  do
       puts "もう一度入力してください"
       dest = gets.chomp
     end
@@ -46,8 +46,8 @@ class Player
   end
 
   class << self
-    def names_and_roles
-      @names_and_roles
+    def players
+      @players
     end
 
     def dead_names_and_roles
@@ -63,12 +63,18 @@ class Player
     end
 
     def rem_user(user)
-      @dead_names_and_roles[user] = @names_and_roles[user]
-      @names_and_roles.delete_if { |key, value| key == user }
+      Player.players.each do |player|
+        @dead_names_and_roles[user] = player.role if player.name == user
+      end
+      players.delete_if { |player| player.name == name }
     end
 
     def reset_in_night
       @saved_person = []
+    end
+
+    def player?(name)
+      @players.any? { |item| item.name == name }
     end
   end
 end
@@ -79,7 +85,7 @@ class Normal < Player
     puts "あなたの夜のアクションは人狼だと疑う人に投票することです"
     puts "人狼だと疑う人を選択してください"
     dest = gets.chomp
-    while dest.empty? or @name == dest or !Player.names_and_roles.key?(dest) do
+    while dest.empty? or @name == dest or !Player.player?(dest) do
       puts "もう一度入力してください"
       dest = gets.chomp
     end
@@ -92,8 +98,8 @@ class Friend < Player
   def confirmed
     puts "あなたの仲間一覧"
     @friends = []
-    Player.names_and_roles.each do |name, role|
-      @friends << name if @name != name and @role == role
+    Player.players.each do|player|
+      @friends << player.name if @name != player.name and @role == player.role
     end
 
     @friends.each do |friend|
@@ -116,7 +122,7 @@ class Friend < Player
     dest = gets.chomp
     # ここでの@friendsは必ずconfirmedの後に実行されるので更新されたデータが入る
     # 人のクラスの内部事情に詳しいFriendクラスを許して
-    while dest.empty? or @name == dest or !Player.names_and_roles.key?(dest) or @friends.include?(dest) do
+    while dest.empty? or @name == dest or !Player.player?(dest) or @friends.include?(dest) do
       puts "もう一度入力してください"
       dest = gets.chomp
     end
@@ -156,12 +162,14 @@ class Diviner < Player
     dest = gets.chomp
     while dest.empty? or
           @name == dest or
-          !Player.names_and_roles.key?(dest) or
+          !Player.player?(dest) or
           @already_divined_persons.key?(dest) do
       puts "もう一度正しく入力してください"
       dest = gets.chomp
     end
-    role = Player.names_and_roles[dest]
+    Player.player.each do |player|
+      role = player.role if player.name == dest
+    end
     @already_divined_persons[dest] = role
     print_role = is_role_wolf?(role) ? "人狼" : "人間"
     puts "#{dest} さんの役職は #{print_role} でした"
@@ -189,7 +197,7 @@ class Knight < Player
     dest = gets.chomp
     while dest.empty? or
           @name == dest or
-          !Player.names_and_roles.key?(dest) do
+          !Player.player?(dest) do
             puts "もう一度正しく入力してください"
             dest = gets.chomp
     end
