@@ -185,6 +185,7 @@ class Jinrou
     end
 
     def action_in_night
+      Player.reset_in_night
       confirm_players do |player|
         puts "あなたは#{player.role}です。"
         puts "これから夜のアクションを行ってください"

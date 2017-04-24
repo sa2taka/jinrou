@@ -3,13 +3,13 @@ require "./character.rb"
 
 class Player
   attr_accessor :name, :role
-  @@names_and_roles = {}
-  @@dead_names_and_roles = {}
-  @@saved_person = []
+  @names_and_roles = {}
+  @dead_names_and_roles = {}
+  @saved_person = []
 
   def initialize(role, name)
     @name = name
-    @@names_and_roles[name] = role
+    Player.names_and_roles[name] = role
     @role = role
   end
 
@@ -38,7 +38,7 @@ class Player
 
   def after_noon_vote
     dest = gets.chomp
-    while dest.empty? or @name == dest or !@@names_and_roles.has_key?(dest)  do
+    while dest.empty? or @name == dest or !@names_and_roles.has_key?(dest)  do
       puts "もう一度入力してください"
       dest = gets.chomp
     end
@@ -47,28 +47,28 @@ class Player
 
   class << self
     def names_and_roles
-      @@names_and_roles
+      @names_and_roles
     end
 
     def dead_names_and_roles
-      @@dead_names_and_roles
+      @dead_names_and_roles
     end
 
     def saved_person
-      @@saved_person
+      @saved_person
     end
 
     def reset
-      @@names_and_roles = []
+      @names_and_roles = []
     end
 
     def rem_user(user)
-      @@dead_names_and_roles[user] = @@names_and_roles[user]
-      @@names_and_roles.delete_if { |key, value| key == user }
+      @dead_names_and_roles[user] = @names_and_roles[user]
+      @names_and_roles.delete_if { |key, value| key == user }
     end
 
     def reset_in_night
-      saved_person = []
+      @saved_person = []
     end
   end
 end
@@ -79,7 +79,7 @@ class Normal < Player
     puts "あなたの夜のアクションは人狼だと疑う人に投票することです"
     puts "人狼だと疑う人を選択してください"
     dest = gets.chomp
-    while dest.empty? or @name == dest or !@@names_and_roles.key?(dest) do
+    while dest.empty? or @name == dest or !Player.names_and_roles.key?(dest) do
       puts "もう一度入力してください"
       dest = gets.chomp
     end
@@ -89,14 +89,10 @@ end
 
 
 class Friend < Player
-  def initialize(role, name)
-    super(role, name)
-  end
-
   def confirmed
     puts "あなたの仲間一覧"
     @friends = []
-    @@names_and_roles.each do |name, role|
+    Player.names_and_roles.each do |name, role|
       @friends << name if @name != name and @role == role
     end
 
@@ -120,7 +116,7 @@ class Friend < Player
     dest = gets.chomp
     # ここでの@friendsは必ずconfirmedの後に実行されるので更新されたデータが入る
     # 人のクラスの内部事情に詳しいFriendクラスを許して
-    while dest.empty? or @name == dest or !@@names_and_roles.key?(dest) or @friends.include?(dest) do
+    while dest.empty? or @name == dest or !Player.names_and_roles.key?(dest) or @friends.include?(dest) do
       puts "もう一度入力してください"
       dest = gets.chomp
     end
@@ -165,7 +161,7 @@ class Diviner < Player
       puts "もう一度正しく入力してください"
       dest = gets.chomp
     end
-    role = @@names_and_roles[dest]
+    role = Player.names_and_roles[dest]
     @already_divined_persons[dest] = role
     print_role = is_role_wolf?(role) ? "人狼" : "人間"
     puts "#{dest} さんの役職は #{print_role} でした"
@@ -177,11 +173,11 @@ end
 class SpiritMedium < Normal
   def confirmed
     puts "亡くなった人とその役職"
-    @@dead_names_and_roles.each do |name, role|
+    Player.dead_names_and_roles.each do |name, role|
       print_role = is_role_wolf?(role) ? "人狼" : "人間"
       puts "#{name} : #{print_role}"
     end
-    if @@dead_names_and_roles.length.zero? then
+    if Player.dead_names_and_roles.length.zero? then
       puts "亡くなった人がいません"
     end
   end
