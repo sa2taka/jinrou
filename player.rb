@@ -5,7 +5,7 @@ class Player
   attr_accessor :name, :role
   @@names_and_roles = {}
   @@dead_names_and_roles = {}
-  @@saved_person = {}
+  @@saved_person = []
 
   def initialize(role, name)
     @name = name
@@ -130,7 +130,6 @@ class Friend < Player
       while value <= 0 or value > 3 do
         value = gets.to_i
       end
-      value = 0 if Player.saved_person.include?(dest)
       Voting.instance.wolf_voting_place[dest] += value
     else
       Voting.instance.human_voting_place[dest] += 1
@@ -191,12 +190,13 @@ end
 class Knight < Player
   def action
     puts "守る人を選択してください"
+    dest = gets.chomp
     while dest.empty? or
           @name == dest or
           !Player.names_and_roles.key?(dest) do
             puts "もう一度正しく入力してください"
             dest = gets.chomp
     end
-    saved_person << dest
+    Player.saved_person << dest
   end
 end
