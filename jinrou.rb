@@ -1,7 +1,7 @@
 require "./player.rb"
 
 class Jinrou
-  attr_accessor :players, :player_num, :wait_time
+  attr_accessor :player_num, :wait_time
 
   def initialize
     Character.instance.wolves.each_key do |wolf|
@@ -112,13 +112,12 @@ class Jinrou
     Character.instance.humans.each_key do |human|
       eval("@#{human}.times { roles << '#{human}' } ")
     end
-    @players = []
     roles.shuffle!
     @players_name.each_index do |index|
       if Character.instance.wolves.key?(roles[index].to_sym) then
-        eval("@players << #{Character.instance.wolves[roles[index].to_sym]}.new(roles[index], @players_name[index])")
+        eval("#{Character.instance.wolves[roles[index].to_sym]}.new(roles[index], @players_name[index])")
       else
-        eval("@players << #{Character.instance.humans[roles[index].to_sym]}.new(roles[index], @players_name[index])")
+        eval("#{Character.instance.humans[roles[index].to_sym]}.new(roles[index], @players_name[index])")
       end
     end
     true # 特に意味もないけど他との整合性を取るために
@@ -152,11 +151,11 @@ class Jinrou
 
     # プレイヤー一人ひとりに確認して特定の動作を行う
     def confirm_players
-      @players.each do |player|
+      Player.players.each do |player|
         do_action_in_safe do
           clear_screen
           puts "プレイヤー一覧"
-          @players.each do |player|
+          Player.players.each do |player|
             print "#{player.name} "
           end
           print "\n"
@@ -291,24 +290,24 @@ class Jinrou
       puts "亡くなった人(上から亡くなった順)"
       Player.dead_names_and_roles.each { |name, role| puts "#{name} : #{role}" }
       puts "生きている人(上から登録順)"
-      @players.each { |player| puts "#{player.name} : #{player.role}" }
+      Player.players.each { |player| puts "#{player.name} : #{player.role}" }
       puts "Game end"
     end
 
     def kill_player(player_name)
-      @players.delete_if { |player| player.name == player_name }
+      Player.players.delete_if { |player| player.name == player_name }
       Voting.instance.rem_user(player_name)
       Player.rem_user(player_name)
     end
 
     def end_game?
       wolf_num = count_wolf_num
-      wolf_num.zero? or wolf_num >= players.length - wolf_num
+      wolf_num.zero? or wolf_num >= Player.players.length - wolf_num
     end
 
     def count_wolf_num
       wolf_num = 0
-      @players.each { |player| wolf_num += 1 if player.role.to_s == "wolf" }
+      Player.players.each { |player| wolf_num += 1 if player.role.to_s == "wolf" }
       wolf_num
     end
   end

@@ -66,7 +66,7 @@ class Player
       Player.players.each do |player|
         @dead_names_and_roles[user] = player.role if player.name == user
       end
-      players.delete_if { |player| player.name == name }
+      @players.delete_if { |player| player.name == name }
     end
 
     def reset_in_night
